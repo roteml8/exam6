@@ -16,7 +16,7 @@ public class InvestingApp {
 	private static List<Command> transactions = new ArrayList<>();
 	private static double totalFunds = 0.0;
 	
-	private static final int NUM_THREADS = 3;
+	private static final int NUM_THREADS = 2;
 	private static final double BUY_INCREASE = 0.02;
 	private static final double SELL_DECREASE = 0.01;
 	private static final int NUM_TRANSACTIONS = 10;
@@ -82,6 +82,7 @@ public class InvestingApp {
 	static class CommandCallable implements Callable<Double>
 	{
 		
+		private static final double COMMAND_FAIL = 0.0;
 		private Command command;
 		
 		public CommandCallable(Command command)
@@ -91,10 +92,10 @@ public class InvestingApp {
 
 		@Override
 		public Double call() throws Exception {
-			
+			double commandValue;
 			try {
 				Stock commandStock = StocksDB.getStockByName(command.stockName);
-				double commandValue;
+				
 				if (command.operation == Operation.BUY)
 				{
 					commandValue = commandStock.getBuyPrice();
@@ -111,7 +112,7 @@ public class InvestingApp {
 			catch (IllegalArgumentException e)
 			{
 				System.out.println("Illegal stock name for transaction - no change to DB.");
-				return 0.0; // no change to total funds value
+				return COMMAND_FAIL; // no change to total funds value
 			}
 		}
 	}

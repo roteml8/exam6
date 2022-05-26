@@ -43,7 +43,7 @@ public class Stock {
 	public double getSellPrice() {
 		return sellPrice;
 	}
-
+	
 
 	
 }
