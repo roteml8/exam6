@@ -22,9 +22,6 @@ public class StocksDB {
 	
 	public static void printStocksInfo() {
 		System.out.println("\nStocks Info:");
-		System.out.println(StocksDB.getStockByName("doodle"));
-		System.out.println(StocksDB.getStockByName("barvazon"));
-		System.out.println(StocksDB.getStockByName("headbook"));
-
+		stocks.keySet().stream().forEach(stock->System.out.println(stocks.get(stock)));
 	}
 }

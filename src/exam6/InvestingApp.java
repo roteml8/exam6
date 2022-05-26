@@ -31,10 +31,10 @@ public class InvestingApp {
 				i%3 == 1 ? StockName.DOODLE.toString() : StockName.HEADBOOK.toString();
 			Command command = new Command(stockName, operation);
 			transactions.add(command);
-			System.out.println(command);
 		}
 		Command illegalCommand = new Command("Solaredge", Operation.BUY);
 		transactions.add(illegalCommand);
+		transactions.forEach(System.out::println);
 	}
 
 	public static void printTotalTransactionsValue()
@@ -42,12 +42,8 @@ public class InvestingApp {
 		System.out.println("\nTotal transactions funds: "+totalFunds);
 	}
 	
-	public static void main(String[] args) throws InterruptedException {
-		
-		initTransactionsList();
-		StocksDB.printStocksInfo();
-		printTotalTransactionsValue();
-		
+	public static void handleTransactions() throws InterruptedException
+	{
 		ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS);
 		List<Future<Double>> futures = new ArrayList<Future<Double>>();
 		
@@ -55,7 +51,6 @@ public class InvestingApp {
 		for (Command command: transactions)
 		{
 			futures.add(executorService.submit(new CommandCallable(command))); 
-
 		}
 		
 		for (Future<Double> future : futures) {
@@ -70,7 +65,14 @@ public class InvestingApp {
 
 		executorService.shutdown();
 		executorService.awaitTermination(2, TimeUnit.SECONDS);
+	}
+	
+	public static void main(String[] args) throws InterruptedException  {
 		
+		initTransactionsList();
+		StocksDB.printStocksInfo();
+		printTotalTransactionsValue();
+		handleTransactions();
 		StocksDB.printStocksInfo();
 		printTotalTransactionsValue();
 		
@@ -90,21 +92,21 @@ public class InvestingApp {
 		@Override
 		public Double call() throws Exception {
 			
-			double commandValue = 0;
 			try {
-			Stock commandStock = StocksDB.getStockByName(command.stockName);
-			if (command.operation == Operation.BUY)
-			{
-				commandValue = commandStock.getBuyPrice();
-				commandStock.addToBuyPrice(BUY_INCREASE);
-			}
-			else 
-			{
-				commandValue = commandStock.getSellPrice();
-				commandStock.decreaseFromSellPrice(SELL_DECREASE);
-			}
-			System.out.println("Transaction completed successfully.");
-			return commandValue;
+				Stock commandStock = StocksDB.getStockByName(command.stockName);
+				double commandValue;
+				if (command.operation == Operation.BUY)
+				{
+					commandValue = commandStock.getBuyPrice();
+					commandStock.addToBuyPrice(BUY_INCREASE);
+				}
+				else 
+				{
+					commandValue = commandStock.getSellPrice();
+					commandStock.decreaseFromSellPrice(SELL_DECREASE);
+				}
+				System.out.println("Transaction completed successfully.");
+				return commandValue;
 			}
 			catch (IllegalArgumentException e)
 			{
