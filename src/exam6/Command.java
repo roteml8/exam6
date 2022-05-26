@@ -13,4 +13,12 @@ public class Command {
 	public static enum Operation{
 		BUY, SELL;
 	}
+
+	@Override
+	public String toString() {
+		return "Command [stockName=" + stockName + ", operation=" + operation + "]";
+	}
+	
+	
 }
+

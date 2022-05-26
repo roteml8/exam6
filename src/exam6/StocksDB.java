@@ -20,7 +20,11 @@ public class StocksDB {
 		return stock;
 	}
 	
-	public static void main(String[] args) {
+	public static void printStocksInfo() {
+		System.out.println("\nStocks Info:");
 		System.out.println(StocksDB.getStockByName("doodle"));
+		System.out.println(StocksDB.getStockByName("barvazon"));
+		System.out.println(StocksDB.getStockByName("headbook"));
+
 	}
 }
